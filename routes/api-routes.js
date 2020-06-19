@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user-model.js');
 
 
-//TODO: Secure both endpoints with JWT
+//Endpoint to access list of Infected Persons. Returns a list of infected persons
+//Checks for Request Authentication using JWTs
 router.get('/infecteds',(req,res)=>{
     const authHeader = req.headers.authorization;
     if(authHeader!=null) {
@@ -14,6 +15,7 @@ router.get('/infecteds',(req,res)=>{
                 res.status(401).send("Request not Authenticated");
                 
             } else {
+                //Finding all Users that are infected
                 User.find({isInfected: true},(err,result)=>{
                     if(err) {
                         res.send("Error");
@@ -29,6 +31,8 @@ router.get('/infecteds',(req,res)=>{
     }
 });
 
+//Endpoint for a User to change status to "Infected"
+//Checks for Request Authentication using JWTs
 router.post('/infecteds',(req,res)=>{
     const authHeader = req.headers.authorization;
     
@@ -38,6 +42,7 @@ router.post('/infecteds',(req,res)=>{
             if(authErr) {
                 res.status(401).send("Request not Authenticated");
             } else {
+                //Find User and Update using User ID included in JWT
                 User.findByIdAndUpdate(decoded.uuid,{isInfected: true},{upsert:false, new:true},(err,result)=>{
                     if(err) {
                         res.send("Error");
