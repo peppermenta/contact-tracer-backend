@@ -25,7 +25,7 @@ router.post('/register',(req,res)=>{
             }
         })
         .catch((err)=>{
-            res.send("error");
+            res.status(500).send("error");
         })
 });
 
